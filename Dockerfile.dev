@@ -1,0 +1,17 @@
+FROM golang:alpine as builder
+
+WORKDIR /go/src/app
+
+RUN apk add curl \
+    && go install github.com/cosmtrek/air@latest
+
+ENV GO111MODULE=on
+
+COPY go.mod go.sum ./
+
+RUN go mod tidy \
+    && go mod vendor
+
+COPY . .
+
+RUN go build -o ./run
